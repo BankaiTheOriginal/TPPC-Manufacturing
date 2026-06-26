@@ -1,0 +1,19 @@
+UPDATE "User"
+SET "role" = 'HEAD_OF_OPERATIONS'
+WHERE "role"::text = 'INVENTORY_MANAGER';
+
+UPDATE "User"
+SET "role" = 'FACTORY_WORKER'
+WHERE "role"::text = 'PRODUCTION_STAFF';
+
+UPDATE "User"
+SET "role" = 'SUPERVISOR'
+WHERE "role"::text = 'FINISHING_SUPERVISOR';
+
+UPDATE "User"
+SET "role" = 'CUSTOMER_CARE'
+WHERE "role"::text = 'CUSTOMER_CARE_REP';
+
+UPDATE "User"
+SET "role" = 'LOGISTICS_TEAM'
+WHERE "role"::text = 'SALES_REPRESENTATIVE';

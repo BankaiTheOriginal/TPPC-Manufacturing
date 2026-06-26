@@ -1,0 +1,796 @@
+// Updated Manufacturing Management System - Prisma Schema
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================================
+// ENUMS
+// ============================================================================
+
+enum Role {
+  ADMINISTRATOR
+  GENERAL_MANAGER
+  PRODUCTION_MANAGER
+  HEAD_OF_OPERATIONS
+  SUPERVISOR
+  ACCOUNTANT
+  LOGISTICS_TEAM
+  DESIGN_TEAM
+  HUMAN_RESOURCES
+  CUSTOMER_CARE
+  FACTORY_WORKER
+}
+
+enum ProductType {
+  BRANDED
+  PLAIN
+  GENERIC
+}
+
+enum ProductCategory {
+  BAGS
+  BOXES
+  CUPS
+}
+
+enum OperationStage {
+  PAPER_SELECTION
+  CUTTING
+  ARTWORK_DESIGN
+  CTP_MAKING
+  PRINTING
+  DIECUTTING
+  LAMINATION
+  FINISHING
+  PACKAGING
+}
+
+enum OperationStatus {
+  UNASSIGNED
+  ASSIGNED
+  WORK_IN_PROGRESS
+  PAUSED
+  COMPLETE
+  REASSIGNED
+}
+
+enum Priority {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum SyncStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  RETRY
+}
+
+// ============================================================================
+// MODELS
+// ============================================================================
+
+model User {
+  id             String    @id @default(cuid())
+  staffId        String    @unique          // e.g. "STF-001"
+  firstName      String
+  lastName       String
+  email          String    @unique
+  password       String                     // bcrypt hash
+  role           Role
+  locationId     String?
+  jobTitle       String?
+  department     String?
+  phoneNumber    String?
+  reportingLine  String?
+  addressLine1   String?
+  addressLine2   String?
+  city           String?
+  state          String?
+  postalCode     String?
+  country        String?
+  refreshToken   String?                    // stored as bcrypt hash
+  isActive       Boolean   @default(true)
+  lastLogin      DateTime?
+  
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  // Relations
+  location                   Location? @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  assignedOperations         Operation[]
+  bomOperations              BomOperation[]
+  productOrderOperations     ProductOrderOperation[]
+  operationStatusHistories   OperationStatusHistory[]
+  createdProductOrders       ProductOrder[] @relation("createdBy")
+  updatedProductOrders       ProductOrder[] @relation("updatedBy")
+  auditLogs                  AuditLog[]
+  supervisedActivities       FactoryWorkerActivity[]
+  notifications              Notification[]
+
+  @@index([locationId])
+}
+
+model Inventory {
+  id              String    @id @default(cuid())
+  sku             String    @unique
+  itemName        String
+  itemType        String
+  category        String
+  quantityInStock Int                             // whole units
+  averagePrice    Decimal   @db.Decimal(15, 2)   // NGN
+  price           Decimal   @db.Decimal(15, 2)   // NGN
+  receivedDate    DateTime
+  lastRestockDate DateTime?
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  // Relations
+  bomMaterials              BomMaterial[]
+  productOrderMaterials     ProductOrderMaterial[]
+  bomOperations             BomOperation[]
+  productOrderOperations    ProductOrderOperation[]
+}
+
+model Product {
+  id              String          @id @default(cuid())
+  sku             String          @unique
+  itemName        String
+  productType     ProductType
+  productCategory ProductCategory
+  openingStock    Int             @default(0)
+  description     String?         @db.Text
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  // Relations
+  bomMaterials   BomMaterial[]
+  bomOperations  BomOperation[]
+  orderLineItems OrderLineItem[]
+  productOrders  ProductOrder[]
+}
+
+model BomMaterial {
+  id          String   @id @default(cuid())
+  productId   String
+  inventoryId String
+  quantity    Decimal  @db.Decimal(10, 4)    // can be fractional (e.g. sheets)
+  unitPrice   Decimal  @db.Decimal(15, 2)   // NGN, snapshot at time of BOM entry
+  lineTotal   Decimal  @db.Decimal(15, 2)   // computed: quantity * unitPrice
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  // Relations
+  product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  inventory Inventory @relation(fields: [inventoryId], references: [id])
+
+  @@unique([productId, inventoryId])
+  @@index([productId])
+  @@index([inventoryId])
+}
+
+model BomOperation {
+  id             String         @id @default(cuid())
+  productId      String
+  operationStage OperationStage
+  inventoryId    String?        // optional material used in this stage
+  assignedStaffId String?
+
+  // Paper/Sheet specifications
+  paperSize        String?       // e.g. "36*48"
+  sheetsPerPacket  Int?
+  costPerPacket    Decimal?  @db.Decimal(15, 2)
+  costPerSheet     Decimal?  @db.Decimal(15, 2)
+  cutoutsPerSheet  Int?
+  costPerCutSheet  Decimal?  @db.Decimal(15, 2)
+
+  // Cutting specifications
+  cutSize          String?
+  cutQuantity      Int?
+  costPerCut       Decimal?  @db.Decimal(15, 2)
+
+  // Artwork/Design specifications
+  numberOfDesigns  Int?
+  designNames      String?  @db.Text
+  designStatus     String?
+
+  // CTP (Computer to Plate) specifications
+  ctpMachine       String?   // e.g. "Kord", "MO", "ADAZ"
+  ctpType          String?
+  ctpCostPerColor  Decimal?  @db.Decimal(15, 2)
+  ctpPlates        Int?
+
+  // Printing specifications
+  printMachine     String?
+  printCostPerColor Decimal? @db.Decimal(15, 2)
+  printImpressions      Int?
+  printCostPerImpression Decimal? @db.Decimal(15, 2)
+
+  // Lamination specifications
+  laminationType   String?   // "Gloss" | "Matte"
+  laminationSize   String?
+  glossCost        Decimal?  @db.Decimal(15, 2)
+  matteCost        Decimal?  @db.Decimal(15, 2)
+  laminationSheetsCount Int?
+  costPerLamination     Decimal? @db.Decimal(15, 2)
+
+  // Diecut specifications
+  diecutSize       String?
+  costPerDiecut    Decimal?  @db.Decimal(15, 2)
+
+  // Finishing specifications
+  itemFinished     String?
+  twistedHandles   Int?      @default(65)
+  costPerFinish    Decimal?  @db.Decimal(15, 2)
+  quantityFinished Int?
+  wastageFromPrinting   Int? @default(0)
+  wastageFromDiecutting Int? @default(0)
+  wastageFromLaminating Int? @default(0)
+  wastageFromHandling   Int? @default(0)
+  totalWastage          Int? @default(0)
+
+  // Vendor
+  vendor           String?
+
+  // General operation info
+  operationName      String?
+  quantityWasted     Int?
+  estimatedTimeMin   Int?      // in minutes
+  labourCost         Decimal?  @db.Decimal(15, 2)
+  expectedTimeline   DateTime?
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  // Relations
+  product       Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  inventory     Inventory? @relation(fields: [inventoryId], references: [id])
+  assignedStaff User?      @relation(fields: [assignedStaffId], references: [id])
+
+  @@index([productId])
+  @@index([operationStage])
+  @@index([assignedStaffId])
+}
+
+model SalesOrder {
+  id                  String    @id @default(cuid())
+  zohoBooksId         String    @unique   
+  salesOrderNumber    String    @unique   
+  customer            String
+  customerEmail       String?
+  createdOnDateTime   DateTime
+  expectedShipmentDate DateTime?
+  orderCompletionDate  DateTime?
+  itemAvailability    String?
+  status              String
+  subtotal            Decimal   @db.Decimal(15, 2)
+  total               Decimal   @db.Decimal(15, 2)
+  notes               String?   @db.Text
+  
+  syncedAt            DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  // Relations
+  lineItems OrderLineItem[]
+
+  @@index([zohoBooksId])
+  @@index([status])
+  @@index([syncedAt])
+}
+
+model OrderLineItem {
+  id              String   @id @default(cuid())
+  salesOrderId    String
+  productId       String?  
+  sku             String
+  orderedQuantity Int
+  sellingPrice    Decimal  @db.Decimal(15, 2)
+  productionCost  Decimal  @db.Decimal(15, 2)  @default(0)
+  lineItemTotal   Decimal  @db.Decimal(15, 2)
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  // Relations
+  salesOrder SalesOrder @relation(fields: [salesOrderId], references: [id], onDelete: Cascade)
+  product    Product?   @relation(fields: [productId], references: [id])
+
+  @@index([salesOrderId])
+  @@index([productId])
+}
+
+model ProductOrder {
+  id              String          @id @default(cuid())
+  sku             String
+  productId       String?
+  productType     ProductType
+  productCategory ProductCategory
+  quantity        Int
+  productName     String
+  orderType       String          
+  priority        Priority        @default(MEDIUM)
+  subtotal        Decimal         @db.Decimal(15, 2)  @default(0)
+  labourCost      Decimal         @db.Decimal(15, 2)  @default(0)
+  grandTotal      Decimal         @db.Decimal(15, 2)  @default(0)
+  
+  // Audit fields
+  createdByUserId String?
+  updatedByUserId String?
+  
+  // Zoho integration fields
+  zohoBooksId     String?         // Link to Zoho Books sales order
+  zohoSyncedAt    DateTime?       // When last synced with Zoho
+  zohoLocationId  String?         // Zoho Inventory location used for assembly completion
+  zohoLocationName String?        // Friendly name for the selected Zoho location
+  quantityPushedToZoho Int       @default(0) // Running total of items pushed to Zoho Books
+
+  notes           String?         @db.Text
+  status          String?         @default("PENDING")
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  // Relations
+  product                 Product?                 @relation(fields: [productId], references: [id])
+  materials               ProductOrderMaterial[]
+  productOrderOperations  ProductOrderOperation[]
+  factoryWorkerActivities FactoryWorkerActivity[]
+  operations              Operation[]
+  prerequisiteOverrides   TaskPrerequisiteOverride[]
+  createdBy               User?                    @relation("createdBy", fields: [createdByUserId], references: [id])
+  updatedBy               User?                    @relation("updatedBy", fields: [updatedByUserId], references: [id])
+
+  @@index([sku])
+  @@index([productId])
+  @@index([zohoBooksId])
+  @@index([createdAt])
+  @@index([status])
+}
+
+model ProductOrderMaterial {
+  id             String   @id @default(cuid())
+  productOrderId String
+  inventoryId    String
+  quantity       Decimal  @db.Decimal(10, 4)   
+  quantityUsed   Decimal  @db.Decimal(10, 4)   @default(0)  
+  unitPrice      Decimal  @db.Decimal(15, 2)
+  lineTotal      Decimal  @db.Decimal(15, 2)   // quantity * unitPrice
+  endTotal       Decimal  @db.Decimal(15, 2)   // (quantity - quantityUsed) * unitPrice
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  // Relations
+  productOrder ProductOrder @relation(fields: [productOrderId], references: [id], onDelete: Cascade)
+  inventory    Inventory    @relation(fields: [inventoryId], references: [id])
+
+  @@index([productOrderId])
+  @@index([inventoryId])
+}
+
+model ProductOrderOperation {
+  id             String         @id @default(cuid())
+  productOrderId String
+  operationStage OperationStage
+  inventoryId    String?
+  assignedStaffId String?
+
+  // Paper/Sheet specifications
+  paperSize        String?
+  sheetsPerPacket  Int?
+  costPerPacket    Decimal?  @db.Decimal(15, 2)
+  costPerSheet     Decimal?  @db.Decimal(15, 2)
+  warehouseLocationId String?                      // FK to Location
+  quantityOfSheetsTaken Int?
+  cutoutsPerSheet  Int?                            // cut outs per source sheet
+  costPerCutSheet  Decimal?  @db.Decimal(15, 2)   // costPerSheet / cutoutsPerSheet
+  
+  // Cutting specifications
+  cutSize          String?
+  cutQuantity      Int?
+  costPerCut       Decimal?  @db.Decimal(15, 2)
+  
+  // Artwork/Design specifications
+  artworkDesignerId String?                        // FK to User (designer)
+  numberOfDesigns  Int?
+  designNames      String?  @db.Text              // JSON or comma-separated
+  designStatus     String?
+  
+  // CTP specifications
+  ctpMachine       String?
+  ctpType          String?                         // CTP plate type
+  ctpCostPerColor  Decimal?  @db.Decimal(15, 2)
+  
+  // Printing specifications
+  printMachine     String?
+  printCostPerColor Decimal? @db.Decimal(15, 2)
+  
+  // Lamination specifications
+  laminationType   String?
+  laminationSize   String?
+  glossCost        Decimal?  @db.Decimal(15, 2)
+  matteCost        Decimal?  @db.Decimal(15, 2)
+  
+  // Diecut specifications
+  diecutSize       String?
+  costPerDiecut    Decimal?  @db.Decimal(15, 2)
+  
+  // Finishing specifications
+  itemFinished      String?
+  finishingLocation String?
+  twistedHandles    Int?      // number of twisted handles (workbook: ₦65 per handle)
+  bagBaseSize       String?   // SMALL | MEDIUM | LARGE | XLARGE — resolves to bag base cost
+  costPerFinish     Decimal?  @db.Decimal(15, 2)
+  quantityFinished  Int?
+  wastageFromPrinting   Int?  @default(0)
+  wastageFromDiecutting Int?  @default(0)
+  wastageFromLaminating Int?  @default(0)
+  wastageFromHandling   Int?  @default(0)
+  totalWastage          Int?  @default(0)
+  
+  // Vendor (CTP, Printing, Diecutting, Lamination)
+  vendor             String?
+
+  // CTP additional
+  ctpPlates          Int?
+
+  // Printing additional
+  printImpressions        Int?
+  printCostPerImpression  Decimal?  @db.Decimal(15, 2)
+
+  // Lamination additional
+  laminationSheetsCount  Int?
+  costPerLamination      Decimal?  @db.Decimal(15, 2)  // union of type+size
+
+  // Packaging fields
+  itemPackaged           String?
+  packagingLocation      String?
+  quantityItemFinished   Int?
+  costPerPackaging       Decimal?  @db.Decimal(15, 2)
+
+  // Paper/cutting pairing
+  paperSelectionOpId     String?
+
+  // Cut-pool linking
+  targetOperationStage  String?
+  sourceCuttingOpId     String?
+  cutsConsumed          Int?
+
+  // General operation info
+  operationName    String?
+  quantityWasted   Int?
+  estimatedTimeMin Int?
+  labourCost       Decimal?  @db.Decimal(15, 2)
+  locationId       String?
+  expectedTimeline DateTime?                        // expected completion date
+  stageStatus      String?   @default("PENDING")  // PENDING | IN_PROGRESS | PARTIALLY_COMPLETE | COMPLETE | SKIPPED | NA
+
+  // Wastage & excess tracking
+  quantityExcess   Int?      @default(0)   // items produced above target — reflects excess
+
+  // Lifecycle timestamps
+  startedAt    DateTime?   // set when stageStatus first moves to IN_PROGRESS
+  stageMovedAt DateTime?   // updated each time the stage status changes
+  completedAt  DateTime?   // set when stageStatus moves to COMPLETE
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  // Relations
+  productOrder  ProductOrder @relation(fields: [productOrderId], references: [id], onDelete: Cascade)
+  inventory     Inventory?   @relation(fields: [inventoryId], references: [id])
+  assignedStaff User?        @relation(fields: [assignedStaffId], references: [id])
+
+  @@index([productOrderId])
+  @@index([productOrderId, paperSelectionOpId])
+  @@index([operationStage])
+  @@index([assignedStaffId])
+}
+
+model Operation {
+  id               String          @id @default(cuid())
+  operationId      String          @unique   
+  operationStage   OperationStage
+  productOrderId   String?
+  role             Role?
+  assignedStaffId  String?
+  estimatedTimeMin Int?
+  details          String?         @db.Text
+  startTime        DateTime?
+  endTime          DateTime?
+  status           OperationStatus @default(UNASSIGNED)
+  notes            String?         @db.Text
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  // Relations
+  assignedStaff User?              @relation(fields: [assignedStaffId], references: [id])
+  productOrder  ProductOrder?      @relation(fields: [productOrderId], references: [id], onDelete: Cascade)
+  statusHistory OperationStatusHistory[]
+
+  @@index([operationStage])
+  @@index([status])
+  @@index([productOrderId])
+  @@index([assignedStaffId])
+  @@index([createdAt])
+}
+
+
+
+model OperationStatusHistory {
+  id               String          @id @default(cuid())
+  operationId      String
+  previousStatus   OperationStatus
+  newStatus        OperationStatus
+  changedByUserId  String
+  changeReason     String?         @db.Text
+  metadata         Json?           // Store additional context as JSON
+  
+  createdAt        DateTime        @default(now())
+
+  // Relations
+  operation User  @relation(fields: [changedByUserId], references: [id])
+  user      Operation @relation(fields: [operationId], references: [id], onDelete: Cascade)
+
+  @@index([operationId])
+  @@index([changedByUserId])
+  @@index([createdAt])
+}
+
+model ZohoSyncLog {
+  id              String      @id @default(cuid())
+  syncType        String      // "SALES_ORDER" | "PRODUCT_UPDATE" | "INVENTORY_SYNC"
+  status          SyncStatus  @default(PENDING)
+  zohoBooksId     String?
+  sourceData      Json?       // Original data from Zoho
+  syncedData      Json?       // Data actually synced
+  message         String?     @db.Text
+  errorDetails    String?     @db.Text
+  retryCount      Int         @default(0)
+  maxRetries      Int         @default(3)
+  
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  syncedAt        DateTime?
+
+  @@index([syncType])
+  @@index([status])
+  @@index([zohoBooksId])
+  @@index([createdAt])
+}
+
+
+
+// Append-only audit trail. Enforced at the DB layer by a trigger that blocks
+// UPDATE and DELETE — never expose .update/.delete methods on this model.
+// Each row is hash-chained: `hash = sha256(prevHash || canonical(payload))`,
+// where the previous row's hash is selected within the insert transaction so
+// the chain stays continuous and tampering is detectable.
+model AuditLog {
+  id               String   @id @default(cuid())
+
+  // WHO
+  userId           String?
+  actorType        String   @default("USER") // USER | SYSTEM | API_KEY
+  actorEmail       String?                   // captured for failed logins
+  impersonatedById String?                   // user being acted on behalf of
+
+  // WHAT
+  eventCategory    String   @default("DATA") // AUTH | RBAC | DATA | SYSTEM
+  action           String                    // CREATE | UPDATE | DELETE | LOGIN_SUCCESS | ...
+  entityType       String
+  entityId         String
+  changes          Json?                     // { before, after } delta
+  metadata         Json?                     // extra contextual data
+
+  // WHERE / HOW
+  httpMethod       String?
+  route            String?
+  requestId        String?
+  sessionId        String?
+  ipAddress        String?
+  userAgent        String?
+
+  // OUTCOME
+  status           String   @default("SUCCESS") // SUCCESS | FAILURE
+  severity         String   @default("INFO")    // INFO | WARN | CRITICAL
+
+  // TAMPER EVIDENCE
+  prevHash         String?
+  hash             String
+
+  // WHEN
+  createdAt        DateTime @default(now())
+
+  user             User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([entityType])
+  @@index([action])
+  @@index([createdAt])
+  @@index([eventCategory])
+  @@index([status])
+  @@index([severity])
+  @@index([requestId])
+  @@index([actorType])
+}
+
+model ZohoOauth {
+  id String @id @default(cuid())
+  refreshToken String
+  accessToken String
+  expiresAt DateTime
+}
+
+//Zoho Model
+enum State {
+  Abia
+  Adamawa
+  AkwaIbom
+  Anambra
+  Bauchi
+  Bayelsa
+  Benue
+  Borno
+  CrossRiver
+  Delta
+  Ebonyi
+  Edo
+  Ekiti
+  Enugu
+  FCT 
+  Gombe
+  Imo
+  Jigawa
+  Kaduna
+  Kano
+  Katsina
+  Kebbi
+  Kogi
+  Kwara
+  Lagos
+  Nasarawa
+  Niger
+  Ogun
+  Ondo
+  Osun
+  Oyo
+  Plateau
+  Rivers
+  Sokoto
+  Taraba
+  Yobe
+  Zamfara
+}
+
+model Location {
+  id String @default(cuid()) @id
+  name String
+  addressLine String
+  country String @default("NIGERIA")
+  state State
+
+  users User[]
+  workerActivities FactoryWorkerActivity[]
+}
+
+model Machine {
+  id             String         @id @default(cuid())
+  name           String
+  operationStage OperationStage
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  @@unique([name, operationStage])
+  @@index([operationStage])
+}
+
+model Vendor {
+  id             String         @id @default(cuid())
+  name           String
+  operationStage OperationStage
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  @@unique([name, operationStage])
+  @@index([operationStage])
+}
+
+model FactoryWorkerActivity {
+  id               String   @id @default(cuid())
+  productOrderId   String?
+  locationId       String
+  supervisorId     String                     // FK to User
+  workerNames      String   @db.Text          // JSON array of worker names
+  workDate         DateTime
+  quantityAllocated Int
+  quantityFinished  Int      @default(0)
+  quantityWasted    Int      @default(0)
+  typeOfFinishing   String?
+  costPerFinish     Decimal? @db.Decimal(15, 2)
+  notes             String?  @db.Text
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  productOrder ProductOrder? @relation(fields: [productOrderId], references: [id], onDelete: Cascade)
+  location     Location      @relation(fields: [locationId], references: [id])
+  supervisor   User          @relation(fields: [supervisorId], references: [id])
+
+  @@index([productOrderId])
+  @@index([locationId])
+  @@index([supervisorId])
+  @@index([workDate])
+  @@index([createdAt])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String                         // TASK_ASSIGNED, PRODUCTION_COMPLETE, DRAFT_APPROVAL, etc.
+  title     String
+  message   String   @db.Text
+  read      Boolean  @default(false)
+  metadata  String?  @db.Text             // optional JSON payload (e.g. orderId, taskId)
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, read])
+  @@index([createdAt])
+}
+
+// ============================================================================
+// TASK GATING & APP SETTINGS
+// ============================================================================
+
+/// Global prerequisite configuration for task gating.
+/// Each row says "before stage X can start, stage Y must be at least partially complete."
+/// If no row exists for a stage, it has no prerequisite (nil — open from day one).
+model TaskPrerequisite {
+  id                String          @id @default(cuid())
+  stage             OperationStage  @unique      // the stage that is gated
+  requiredStage     OperationStage               // must be partially/fully complete first
+  unlockThreshold   String          @default("partial_any")  // partial_any | full | percentage
+  thresholdPercent  Int?                                      // only used when unlockThreshold = percentage
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+/// Per-order prerequisite overrides. Only created when a PM overrides the global default.
+model TaskPrerequisiteOverride {
+  id                String          @id @default(cuid())
+  productOrderId    String
+  stage             OperationStage
+  requiredStage     OperationStage?             // null = no prerequisite (override to nil)
+  unlockThreshold   String          @default("partial_any")
+  thresholdPercent  Int?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  productOrder ProductOrder @relation(fields: [productOrderId], references: [id], onDelete: Cascade)
+
+  @@unique([productOrderId, stage])
+  @@index([productOrderId])
+}
+
+/// Key-value application settings (logo path, feature flags, etc.)
+model AppSetting {
+  key       String   @id          // e.g. "company_logo_url", "company_name"
+  value     String   @db.Text
+  updatedAt DateTime @updatedAt
+}

@@ -1,0 +1,2254 @@
+/*
+ * Author       : excelliumdemo
+ * Generated on : 31-Mar-2026 05:18:44
+ * Version      : 1.0
+ */
+ application "Manufacturing  and production  system for TPPC "
+ {
+ 	date format = "dd-MMM-yyyy"
+ 	time zone = "Africa/Lagos"
+ 	time format = "24-hr"
+
+ 	forms
+	{
+		form Inventory
+		{
+			success message = "Inventory Added Successfully"
+			Section
+			(
+				type = section
+	 			row = 1
+	 			column = 0   
+				width = medium
+			)
+			SKU
+			(
+    			type = text
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			Received_Date
+			(
+    			type = date
+				displayname = "Received Date"
+				alloweddays = 0,1,2,3,4,5,6
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			Item_Name
+			(
+    			type = text
+				displayname = "Item Name"
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			item_Type
+			(
+    			type = text
+				displayname = "item Type"
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			Category
+			(
+    			type = text
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			Quantity_In_Stock
+			(
+				type = number
+				displayname = "Quantity In Stock"
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			Average_Price
+			(
+				displayname = "Average Price "
+				type = NGN
+				format = commadotwestern
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			Price
+			(
+				type = NGN
+				format = commadotwestern
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+	
+			actions
+			{
+				on add
+				{
+					submit
+					(
+   						type = submit
+   						displayname = "Submit"
+					)
+				}
+				on edit
+				{
+					update
+					(
+   						type = submit
+   						displayname = "Update"
+					)
+					cancel
+					(
+   						type = cancel
+   						displayname = "Cancel"
+					)
+				}
+			}
+		}
+		form Operations
+		{
+			success message = "Operation Added Successfully"
+			Section
+			(
+				type = section
+	 			row = 1
+	 			column = 0   
+				width = medium
+			)
+			Operation_ID
+			(
+    			type = text
+				displayname = "Operation ID"
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			Operation_Stage
+			(
+				type = picklist
+				displayname = "Operation Stage"
+				maxchar = 100
+				values = {"CTP making","Printing","Diecutting","Lamination","Packaging","Finishing"}
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			Product_Order_ID
+			(
+    			type = text
+				displayname = "Product  Order ID"
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			Role
+			(
+				type = picklist	
+				values  = Staff.ID
+    			displayformat = [Role]
+				sortorder = ascending
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			Assigned_Staff
+			(
+				type = picklist	
+				displayname = "Assigned Staff"
+				values  = Staff.ID
+    			displayformat = [" " + Name.prefix + " " + Name.first_name + " " + Name.last_name + " " + Name.suffix]
+				sortorder = ascending
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			Estimated_Time_in_mins
+			(
+				type = number
+				displayname = "Estimated Time (in mins) "
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			Details
+			(
+    			type = textarea
+				height = 100px
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			Start_Time
+			(
+    			type = time
+				displayname = "Start Time"
+				timedisplayoptions = "hh:mm:ss" 
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			End_Time
+			(
+    			type = time
+				displayname = "End Time"
+				timedisplayoptions = "hh:mm:ss" 
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			Status
+			(
+				type = picklist
+				maxchar = 100
+				values = {"Work in Progress","Paused","Complete","Assigned","Unassigned","Re-assigned"}
+				initial value = "Unassigned"
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+	
+			actions
+			{
+				on add
+				{
+					submit
+					(
+   						type = submit
+   						displayname = "Submit"
+					)
+				}
+				on edit
+				{
+					update
+					(
+   						type = submit
+   						displayname = "Update"
+					)
+					cancel
+					(
+   						type = cancel
+   						displayname = "Cancel"
+					)
+				}
+			}
+		}
+		form Order_Form
+		{
+			displayname = "Order Form"
+			success message = "Order Added Successfully"
+			Section
+			(
+				type = section
+	 			row = 1
+	 			column = 0   
+				width = medium
+			)
+			Customer
+			(
+    			type = text
+				displayname = "Customer "
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			Created_on_date_time
+			(
+    			type = datetime
+				displayname = "Created  on (date & time )"
+				timedisplayoptions = "hh:mm:ss"
+				alloweddays = 0,1,2,3,4,5,6
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			Sales_Order_ID
+			(
+    			type = text
+				displayname = "Sales Order ID "
+	 			row = 1
+	 			column = 2   
+				width = medium
+			)
+			Expected_Shipment_Date
+			(
+    			type = date
+				displayname = "Expected Shipment Date"
+				alloweddays = 0,1,2,3,4,5,6
+	 			row = 1
+	 			column = 2   
+				width = medium
+			)
+			Order_Completion_Date
+			(
+    			type = text
+				displayname = "Order Completion Date"
+	 			row = 1
+	 			column = 3   
+				width = medium
+			)
+			Item_Availability
+			(
+    			type = text
+				displayname = "Item Availability"
+	 			row = 1
+	 			column = 3   
+				width = medium
+			)
+			Items
+			(
+				type = grid
+				Order_Form
+				(
+					type = picklist	
+					displayname = "Order Form"
+					values  = Order_Form.ID
+    				displayformat = [Customer]
+					sortorder = ascending
+					width = medium
+				)
+				SKU
+				(
+    				type = text
+					width = medium
+				)
+				Ordered_Quantity
+				(
+					type = number
+					displayname = "Ordered Quantity"
+					width = medium
+				)
+				Selling_Price
+				(
+					displayname = "Selling Price "
+					type = NGN
+					format = commadotwestern
+					width = medium
+				)
+				Production_Cost
+				(
+					displayname = "Production Cost"
+					type = NGN
+					format = commadotwestern
+					width = medium
+				)
+				Line_Item_Total
+				(
+					displayname = "Line Item Total "
+					type = NGN
+					format = commadotwestern
+					width = medium
+				)
+				Quantity_In_Stock
+				(
+					type = number
+					displayname = "Quantity In Stock "
+					width = medium
+				)
+	 			row = 2
+	 			column = 1   
+				width = medium
+			)
+			Section1
+			(
+				type = section
+				displayname = "Section"
+				visibility = true
+	 			row = 3
+	 			column = 0   
+				width = medium
+			)
+			Subtotal
+			(
+				displayname = "Subtotal "
+				type = NGN
+				format = commadotwestern
+	 			row = 3
+	 			column = 1   
+				width = medium
+			)
+			Total
+			(
+				type = NGN
+				format = commadotwestern
+	 			row = 3
+	 			column = 2   
+				width = medium
+			)
+	
+			actions
+			{
+				on add
+				{
+					submit
+					(
+   						type = submit
+   						displayname = "Submit"
+					)
+				}
+				on edit
+				{
+					update
+					(
+   						type = submit
+   						displayname = "Update"
+					)
+					cancel
+					(
+   						type = cancel
+   						displayname = "Cancel"
+					)
+				}
+			}
+		}
+		form Product_BOM
+		{
+			displayname = "Product BOM"
+			success message = "Data Added Successfully!"
+			Section
+			(
+				type = section
+	 			row = 1
+	 			column = 0   
+				width = medium
+			)
+			SKU
+			(
+    			type = text
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			Product_Type
+			(
+				type = picklist
+				displayname = "Product Type"
+				maxchar = 100
+				values = {"Branded","Plain","Generic"}
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			Opening_Stock
+			(
+				type = number
+				displayname = "Opening Stock"
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			Item_Name
+			(
+    			type = text
+				displayname = "Item Name "
+	 			row = 1
+	 			column = 2   
+				width = medium
+			)
+			Product_Category
+			(
+				type = picklist
+				displayname = "Product Category"
+				maxchar = 100
+				values = {"Bags","Boxes","Cups"}
+	 			row = 1
+	 			column = 2   
+				width = medium
+			)
+			Bill_Of_Materials
+			(
+				type = grid
+				displayname = "Bill Of Materials"
+				Material_Name
+				(
+					type = picklist	
+					displayname = "Material Name"
+					values  = Inventory.ID
+    				displayformat = [Category]
+					sortorder = ascending
+					width = medium
+				)
+				Quantity
+				(
+					type = number
+					width = medium
+				)
+				Product_Type
+				(
+    				type = text
+					displayname = "Product Type"
+					width = medium
+				)
+				Unit_Price
+				(
+					displayname = "Unit Price "
+					type = NGN
+					format = commadotwestern
+					width = medium
+				)
+				Line_Total
+				(
+					displayname = "Line Total"
+					type = NGN
+					format = commadotwestern
+					width = medium
+				)
+	 			row = 2
+	 			column = 1   
+				width = medium
+			)
+			Operations
+			(
+				type = grid
+				Operation_Stage
+				(
+					type = picklist
+					displayname = "Operation Stage"
+					maxchar = 100
+					values = {"CTP making","Printing","Diecutting","Lamination","Packaging","Finishing"}
+					width = medium
+				)
+				Material_Used
+				(
+					type = picklist	
+					displayname = "Material Used "
+					values  = Inventory.ID
+    				displayformat = [Category]
+					sortorder = ascending
+					width = medium
+				)
+				Assigned_Staff
+				(
+					type = picklist	
+					displayname = "Assigned Staff"
+					values  = Staff.ID
+    				displayformat = [" " + Name.prefix + " " + Name.first_name + " " + Name.last_name + " " + Name.suffix]
+					sortorder = ascending
+					width = medium
+				)
+				Paper_Size
+				(
+					type = picklist
+					displayname = "Paper Size "
+					maxchar = 100
+					values = {"36*48","24*36","20*30","24*18","31*42","36*47","24*40"}
+					width = medium
+				)
+				Sheets_Per_Packet
+				(
+					type = picklist
+					displayname = "Sheets Per Packet"
+					maxchar = 100
+					values = {"100","500","460"}
+					width = medium
+				)
+				Cost_Per_Packet
+				(
+					type = picklist
+					displayname = "Cost Per Packet"
+					maxchar = 100
+					values = {"#47,000","#50,000","#55,000","#60,000","#65,000","#25,500","#27,500","#28,000","#30,000","#34,000","#48,000","#20,000","#45,000","#24,000","#35,000","#85,000"}
+					width = medium
+				)
+				Cost_Per_Sheet
+				(
+					type = picklist
+					displayname = "Cost Per Sheet "
+					maxchar = 100
+					values = {"#470","#500","#550","#600","#650","#255","#275","#56","#60","#68","#96","#110","#200","#90","#100","#240","#350","#850","#141.30"}
+					width = medium
+				)
+				Cut_Size
+				(
+					type = picklist
+					displayname = "Cut Size"
+					maxchar = 100
+					values = {"16*18","13.5*15.5","10*20.5","10*15.5","12*24","12*12","14*14","12*22","12*18","12*9","6*9","10*10","11*14","18*24","18*81","24*36"}
+					width = medium
+				)
+				Cut_Quantity
+				(
+    				type = text
+					displayname = "Cut Quantity"
+					width = medium
+				)
+				Cost_Per_Cut
+				(
+					type = picklist
+					displayname = "Cost Per Cut "
+					maxchar = 100
+					values = {"#7","#5","#2.5"}
+					width = medium
+				)
+				CTP
+				(
+					type = picklist
+					maxchar = 100
+					values = {"Kord","MO","Sord","SM","ADAZ"}
+					width = medium
+				)
+				Cost_Per_Color
+				(
+					type = picklist
+					displayname = "Cost Per Color"
+					maxchar = 100
+					values = {"#1,750","#2,000","#5,000"}
+					width = medium
+				)
+				Print
+				(
+					type = picklist
+					maxchar = 100
+					values = {"Kord","MO","Sord","SM","DI Paper Print","DI Card Print","Screenprinting","ADAZ"}
+					width = medium
+				)
+				Cost_Per_Color1
+				(
+					type = picklist
+					displayname = "Cost Per Color"
+					maxchar = 100
+					values = {"#2,000","#4,000","#6,000","#7,500","#350","#500","#60"}
+					width = medium
+				)
+				Lamination_Type
+				(
+					type = picklist
+					displayname = "Lamination Type"
+					maxchar = 100
+					values = {"Gloss","Matte"}
+					width = medium
+				)
+				Size
+				(
+					type = picklist
+					displayname = "Size "
+					maxchar = 100
+					values = {"16*18","13.5*15.5","10*15.5","12*24","12*12","14*14","12*22","12*18","12*9","6*9","10*10","11*14","18*24","18*81","24*36"}
+					width = medium
+				)
+				Gloss_Cost
+				(
+					type = picklist
+					displayname = "Gloss Cost "
+					maxchar = 100
+					values = {"#40","#18","#15","#14","#25","#12","#10","#8","#42","#50"}
+					width = medium
+				)
+				Matte_Cost
+				(
+					type = picklist
+					displayname = "Matte Cost "
+					maxchar = 100
+					values = {"#50","#24","#18","#17","#30","#15","#22","#45","#48","#55"}
+					width = medium
+				)
+				Diecut_Size
+				(
+					type = picklist
+					displayname = "Diecut Size "
+					maxchar = 100
+					values = {"16*18","13.5*15.5","10*20.5","10*15.5","12*24","12*12","14*14","12*22","12*18","12*9","6*9","10*10","11*14","18*241","18*81","24*36"}
+					width = medium
+				)
+				Cost_Per_Diecut
+				(
+					type = picklist
+					displayname = "Cost Per Diecut"
+					maxchar = 100
+					values = {"#15","#6","#4"}
+					width = medium
+				)
+				Item_Finished
+				(
+					type = picklist
+					displayname = "Item Finished"
+					maxchar = 100
+					values = {"Choice 1","Choice 2","Choice 3"}
+					width = medium
+				)
+				twisted_handles
+				(
+    				type = text
+					displayname = "twisted handles "
+					initial value = "65"
+					width = medium
+				)
+				Operation_Name
+				(
+    				type = text
+					displayname = "Operation Name "
+					width = medium
+				)
+				Quantity_Wasted
+				(
+					type = number
+					displayname = "Quantity Wasted "
+					width = medium
+				)
+				Role
+				(
+					type = picklist	
+					values  = Staff.ID
+    				displayformat = [Role]
+					sortorder = ascending
+					width = medium
+				)
+				Estimated_Time_in_mins
+				(
+					type = number
+					displayname = "Estimated Time (in mins) "
+					width = medium
+				)
+				Cost_Per_Finish
+				(
+					type = picklist
+					displayname = "Cost Per Finish "
+					maxchar = 100
+					values = {"#18","#12","#5","#4"}
+					width = medium
+				)
+				Labour_Cost
+				(
+					type = number
+					displayname = "Labour Cost"
+					width = medium
+				)
+	 			row = 3
+	 			column = 1   
+				width = medium
+			)
+	
+			actions
+			{
+				on add
+				{
+					submit
+					(
+   						type = submit
+   						displayname = "Submit"
+					)
+				}
+				on edit
+				{
+					update
+					(
+   						type = submit
+   						displayname = "Update"
+					)
+					cancel
+					(
+   						type = cancel
+   						displayname = "Cancel"
+					)
+				}
+			}
+		}
+		form Product_Order
+		{
+			displayname = "Product Order"
+			success message = "Data Added Successfully!"
+			Section
+			(
+				type = section
+	 			row = 1
+	 			column = 0   
+				width = medium
+			)
+			SKU
+			(
+    			type = text
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			Product_Type
+			(
+				type = picklist
+				displayname = "Product Type"
+				maxchar = 100
+				values = {"Branded","Plain","Generic"}
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			Product_Category
+			(
+				type = picklist
+				displayname = "Product Category"
+				maxchar = 100
+				values = {"Bags","Boxes","Cups"}
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			Quantity
+			(
+				type = number
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			Product_Name
+			(
+    			type = text
+				displayname = "Product Name "
+	 			row = 1
+	 			column = 2   
+				width = medium
+			)
+			Order_Type
+			(
+				type = picklist
+				displayname = "Order Type"
+				maxchar = 100
+				values = {"Choice 1","Choice 2","Choice 3"}
+	 			row = 1
+	 			column = 2   
+				width = medium
+			)
+			priority
+			(
+				type = picklist
+				maxchar = 100
+				values = {"High","Medium","Low"}
+	 			row = 1
+	 			column = 2   
+				width = medium
+			)
+			Material_required
+			(
+				type = grid
+				displayname = "Material required"
+				Material_Name
+				(
+					type = picklist	
+					displayname = "Material Name"
+					values  = Inventory.ID
+    				displayformat = [Category]
+					sortorder = ascending
+					width = medium
+				)
+				Quantity
+				(
+					type = number
+					displayname = "Quantity Entered "
+					width = medium
+				)
+				Product_Type
+				(
+    				type = text
+					displayname = "Product Type"
+					width = medium
+				)
+				Quantity_Used
+				(
+					type = number
+					displayname = "Quantity Used"
+					width = medium
+				)
+				Unit_Price
+				(
+					displayname = "Unit Price "
+					type = NGN
+					format = commadotwestern
+					width = medium
+				)
+				Line_Total
+				(
+					displayname = "Line Total"
+					type = NGN
+					format = commadotwestern
+					width = medium
+				)
+				End_Total
+				(
+					displayname = "End Total"
+					type = NGN
+					format = commadotwestern
+					width = medium
+				)
+	 			row = 2
+	 			column = 1   
+				width = medium
+			)
+			Operations
+			(
+				type = grid
+				Operation_Stage
+				(
+					type = picklist
+					displayname = "Operation Stage"
+					maxchar = 100
+					values = {"CTP making","Printing","Diecutting","Lamination","Packaging","Finishing"}
+					width = medium
+				)
+				Material_Used
+				(
+					type = picklist	
+					displayname = "Material Used "
+					values  = Inventory.ID
+    				displayformat = [Category]
+					sortorder = ascending
+					width = medium
+				)
+				Assigned_Staff
+				(
+					type = picklist	
+					displayname = "Assigned Staff"
+					values  = Staff.ID
+    				displayformat = [" " + Name.prefix + " " + Name.first_name + " " + Name.last_name + " " + Name.suffix]
+					sortorder = ascending
+					width = medium
+				)
+				Paper_Size
+				(
+					type = picklist
+					displayname = "Paper Size "
+					maxchar = 100
+					values = {"36*48","24*36","20*30","24*18","31*42","36*47","24*40"}
+					width = medium
+				)
+				Sheets_Per_Packet
+				(
+					type = picklist
+					displayname = "Sheets Per Packet"
+					maxchar = 100
+					values = {"100","500","460"}
+					width = medium
+				)
+				Cost_Per_Packet
+				(
+					type = picklist
+					displayname = "Cost Per Packet"
+					maxchar = 100
+					values = {"#47,000","#50,000","#55,000","#60,000","#65,000","#25,500","#27,500","#28,000","#30,000","#34,000","#48,000","#20,000","#45,000","#24,000","#35,000","#85,000"}
+					width = medium
+				)
+				Cost_Per_Sheet
+				(
+					type = picklist
+					displayname = "Cost Per Sheet "
+					maxchar = 100
+					values = {"#470","#500","#550","#600","#650","#255","#275","#56","#60","#68","#96","#110","#200","#90","#100","#240","#350","#850","#141.30"}
+					width = medium
+				)
+				Cut_Size
+				(
+					type = picklist
+					displayname = "Cut Size"
+					maxchar = 100
+					values = {"16*18","13.5*15.5","10*20.5","10*15.5","12*24","12*12","14*14","12*22","12*18","12*9","6*9","10*10","11*14","18*24","18*81","24*36"}
+					width = medium
+				)
+				Cut_Quantity
+				(
+    				type = text
+					displayname = "Cut Quantity"
+					width = medium
+				)
+				Cost_Per_Cut
+				(
+					type = picklist
+					displayname = "Cost Per Cut "
+					maxchar = 100
+					values = {"#7","#5","#2.5"}
+					width = medium
+				)
+				CTP
+				(
+					type = picklist
+					maxchar = 100
+					values = {"Kord","MO","Sord","SM","ADAZ"}
+					width = medium
+				)
+				Currency
+				(
+					type = NGN
+					format = commadotwestern
+					width = medium
+				)
+				Cost_Per_Color
+				(
+					type = picklist
+					displayname = "Cost Per Color"
+					maxchar = 100
+					values = {"#1,750","#2,000","#5,000"}
+					width = medium
+				)
+				Currency1
+				(
+					displayname = "Currency"
+					type = NGN
+					format = commadotwestern
+					width = medium
+				)
+				Print
+				(
+					type = picklist
+					maxchar = 100
+					values = {"Kord","MO","Sord","SM","DI Paper Print","DI Card Print","Screenprinting","ADAZ"}
+					width = medium
+				)
+				Cost_Per_Color1
+				(
+					type = picklist
+					displayname = "Cost Per Color"
+					maxchar = 100
+					values = {"#2,000","#4,000","#6,000","#7,500","#350","#500","#60"}
+					width = medium
+				)
+				Lamination_Type
+				(
+					type = picklist
+					displayname = "Lamination Type"
+					maxchar = 100
+					values = {"Gloss","Matte"}
+					width = medium
+				)
+				Size
+				(
+					type = picklist
+					displayname = "Size "
+					maxchar = 100
+					values = {"16*18","13.5*15.5","10*15.5","12*24","12*12","14*14","12*22","12*18","12*9","6*9","10*10","11*14","18*24","18*81","24*36"}
+					width = medium
+				)
+				Gloss_Cost
+				(
+					type = picklist
+					displayname = "Gloss Cost "
+					maxchar = 100
+					values = {"#40","#18","#15","#14","#25","#12","#10","#8","#42","#50"}
+					width = medium
+				)
+				Matte_Cost
+				(
+					type = picklist
+					displayname = "Matte Cost "
+					maxchar = 100
+					values = {"#50","#24","#18","#17","#30","#15","#22","#45","#48","#55"}
+					width = medium
+				)
+				Diecut_Size
+				(
+					type = picklist
+					displayname = "Diecut Size "
+					maxchar = 100
+					values = {"16*18","13.5*15.5","10*20.5","10*15.5","12*24","12*12","14*14","12*22","12*18","12*9","6*9","10*10","11*14","18*241","18*81","24*36"}
+					width = medium
+				)
+				Cost_Per_Diecut
+				(
+					type = picklist
+					displayname = "Cost Per Diecut"
+					maxchar = 100
+					values = {"#15","#6","#4"}
+					width = medium
+				)
+				Item_Finished
+				(
+					type = picklist
+					displayname = "Item Finished"
+					maxchar = 100
+					values = {"Choice 1","Choice 2","Choice 3"}
+					width = medium
+				)
+				twisted_handles
+				(
+    				type = text
+					displayname = "twisted handles "
+					initial value = "65"
+					width = medium
+				)
+				Operation_Name
+				(
+    				type = text
+					displayname = "Operation Name "
+					width = medium
+				)
+				Quantity_Wasted
+				(
+					type = number
+					displayname = "Quantity Wasted "
+					width = medium
+				)
+				Role
+				(
+					type = picklist	
+					values  = Staff.ID
+    				displayformat = [Role]
+					sortorder = ascending
+					width = medium
+				)
+				Estimated_Time_in_mins
+				(
+					type = number
+					displayname = "Estimated Time (in mins) "
+					width = medium
+				)
+				Cost_Per_Finish
+				(
+					type = picklist
+					displayname = "Cost Per Finish "
+					maxchar = 100
+					values = {"#18","#12","#5","#4"}
+					width = medium
+				)
+				Labour_Cost
+				(
+					type = number
+					displayname = "Labour Cost"
+					width = medium
+				)
+	 			row = 3
+	 			column = 1   
+				width = medium
+			)
+			Section1
+			(
+				type = section
+				displayname = "Section"
+	 			row = 4
+	 			column = 0   
+				width = medium
+			)
+			Subtotal
+			(
+				type = NGN
+				format = commadotwestern
+	 			row = 4
+	 			column = 1   
+				width = medium
+			)
+			GrandTotal
+			(
+				type = NGN
+				format = commadotwestern
+	 			row = 4
+	 			column = 1   
+				width = medium
+			)
+			Labour_Cost
+			(
+				displayname = "Labour Cost"
+				type = NGN
+				format = commadotwestern
+	 			row = 4
+	 			column = 2   
+				width = medium
+			)
+	
+			actions
+			{
+				on add
+				{
+					submit
+					(
+   						type = submit
+   						displayname = "Submit"
+					)
+				}
+				on edit
+				{
+					update
+					(
+   						type = submit
+   						displayname = "Update"
+					)
+					cancel
+					(
+   						type = cancel
+   						displayname = "Cancel"
+					)
+				}
+			}
+		}
+		form Staff
+		{
+			success message = "Staff Added Successfully"
+			Section
+			(
+				type = section
+	 			row = 1
+	 			column = 0   
+				width = medium
+			)
+			Staff_ID
+			(
+    			type = text
+				displayname = "Staff ID "
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			Name
+			(
+    			type = name
+     			prefix
+     			(
+	     			 type = prefix
+	     			 displayname ="Prefix"
+	     			 visibility = false
+	     			 value = {"Mr.","Mrs.","Ms."}
+     			) 
+     			first_name
+     			(
+	     			 type = first_name
+	     			 displayname ="First Name"
+     			) 
+     			last_name
+     			(
+	     			 type = last_name
+	     			 displayname ="Last Name"
+     			) 
+     			suffix
+     			(
+	     			 type = suffix
+	     			 displayname ="Suffix"
+	     			 visibility = false
+     			) 
+	 			row = 1
+	 			column = 1   
+				width = medium
+				personal data = true
+			)
+			Role
+			(
+				type = picklist
+				maxchar = 100
+				values = {"Administrator","Inventory Manager","Production Staff","Finishing supervisor","Customer care rep","Sales Representative"}
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			Address
+			(
+    			type = address
+     			capture_coordinates = true
+     			adjust_using_map = false
+     			address_line_1
+     			(
+	     			  type = address_line_1
+	     			  displayname = "Address Line 1"
+     			) 
+     			address_line_2
+     			(
+	     			  type = address_line_2
+	     			  displayname = "Address Line 2"
+     			) 
+     			district_city
+     			(
+	     			  type = district_city
+	     			  displayname = "City / District"
+     			) 
+     			state_province
+     			(
+	     			  type = state_province
+	     			  displayname = "State / Province"
+     			) 
+     			postal_Code
+     			(
+	     			  type = postal_Code
+	     			  displayname = "Postal Code"
+     			) 
+     			country
+     			(
+	     			  type = country
+	     			  displayname = "Country"
+     			) 
+     			latitude
+     			(
+	     			  type = latitude
+	     			  displayname = "latitude"
+	     			 visibility = false
+     			) 
+     			longitude
+     			(
+	     			  type = longitude
+	     			  displayname = "longitude"
+	     			 visibility = false
+     			) 
+	 			row = 1
+	 			column = 1   
+				width = medium
+				personal data = true
+			)
+	
+			actions
+			{
+				on add
+				{
+					submit
+					(
+   						type = submit
+   						displayname = "Submit"
+					)
+				}
+				on edit
+				{
+					update
+					(
+   						type = submit
+   						displayname = "Update"
+					)
+					cancel
+					(
+   						type = cancel
+   						displayname = "Cancel"
+					)
+				}
+			}
+		}
+	}
+	reports
+	{
+		default list All_Orders
+		{
+			displayName = "All Orders"
+			show all rows from Order_Form    
+			(
+				Customer as "Customer "
+				Sales_Order_ID as "Sales Order ID "
+				Created_on_date_time as "Created  on (date & time )"
+				Expected_Shipment_Date as "Expected Shipment Date"
+				Order_Completion_Date as "Order Completion Date"
+				Item_Availability as "Item Availability"
+				Items.Order_Form as "Items"
+				Subtotal as "Subtotal "
+				Total
+			)
+		}
+		default list All_Inventories
+		{
+			displayName = "All Inventories"
+			show all rows from Inventory    
+			(
+				SKU
+				Received_Date as "Received Date"
+				Item_Name as "Item Name"
+				item_Type as "item Type"
+				Category
+				Quantity_In_Stock as "Quantity In Stock"
+				Average_Price as "Average Price "
+				Price
+			)
+		}
+		default list Product_BOM_Report
+		{
+			displayName = "Product BOM Report"
+			show all rows from Product_BOM    
+			(
+				Item_Name as "Item Name "
+				SKU
+				Product_Type as "Product Type"
+				Product_Category as "Product Category"
+				Opening_Stock as "Opening Stock"
+				Bill_Of_Materials.Material_Name as "Bill Of Materials"
+				Operations.Operation_Stage as "Operations"
+			)
+		}
+		default list All_Staffs
+		{
+			displayName = "All Staffs"
+			show all rows from Staff    
+			(
+				Staff_ID as "Staff ID "
+				Name 
+	 			(
+	      			displayformat = [first_name+""+prefix+""+last_name+""+suffix]
+	 			)
+				Role
+				Address 
+	 			(
+	      			displayformat = [address_line_1+""+address_line_2+""+district_city+""+state_province+""+postal_Code+""+country]
+	      			enable = Link_to_Map,Show_As_Text
+	 			)
+			)
+		}
+		default list Product_Order_Report
+		{
+			displayName = "Product Order Report"
+			show all rows from Product_Order    
+			(
+				SKU
+				Product_Type as "Product Type"
+				Quantity
+				Product_Name as "Product Name "
+				Product_Category as "Product Category"
+				priority
+				Order_Type as "Order Type"
+				Subtotal
+				Labour_Cost as "Labour Cost"
+				GrandTotal
+			)
+		}
+		default list All_Operations
+		{
+			displayName = "All Operations"
+			show all rows from Operations    
+			(
+				Operation_ID as "Operation ID"
+				Operation_Stage as "Operation Stage"
+				Product_Order_ID as "Product  Order ID"
+				Role
+				Assigned_Staff as "Assigned Staff"
+				Estimated_Time_in_mins as "Estimated Time (in mins) "
+				Details
+				Start_Time as "Start Time"
+				End_Time as "End Time"
+				Status
+			)
+		}
+	}
+
+
+	share_settings
+	{
+			"Read"
+			{
+				name = "Read"
+				type = Users_Permissions
+				permissions = {Chat:true, Predefined:true, ApiAccess:true, PIIAccess:true, ePHIAccess:true}
+				description = "This profile will have read permission for all components\n"
+			}
+			"Write"
+			{
+				name = "Write"
+				type = Users_Permissions
+				permissions = {Chat:true, Predefined:true, ApiAccess:true, PIIAccess:true, ePHIAccess:true}
+				description = "This profile will have write permission for all components\n"
+			}
+			"Developer"
+			{
+				name = "Developer"
+				type = Developer
+				permissions = {Chat:false, Predefined:true, ApiAccess:true, PIIAccess:true, ePHIAccess:true}
+				description = "Developer Profile\n"
+			}
+			"Administrator"
+			{
+				name = "Administrator"
+				type = Users_Permissions
+				permissions = {Chat:true, Predefined:true, ApiAccess:true, PIIAccess:true, ePHIAccess:true}
+				description = "This profile will have all the permissions.\n"
+			}
+			"Customer"
+			{
+				name = "Customer"
+				type = Customer_Portal
+				permissions = {Chat:true, Predefined:true, ApiAccess:true, PIIAccess:true, ePHIAccess:true}
+				description = "This is the default profile having only add and view permission.\n"
+			}
+			roles
+			{
+				"CEO"
+				{
+					description = "User belonging to this role can access data of all other users."
+				}
+			}
+	}
+
+
+	web
+	{
+		forms
+		{
+			form Inventory
+			{
+				label placement = left
+			}
+			form Operations
+			{
+				label placement = left
+			}
+			form Order_Form
+			{
+				label placement = left
+			}
+			form Product_BOM
+			{
+				label placement = left
+			}
+			form Product_Order
+			{
+				label placement = left
+			}
+			form Staff
+			{
+				label placement = left
+			}
+		}
+		reports
+		{
+			report All_Orders
+			{
+				quickview
+				(
+					layout
+					(
+		 				type = -1
+						datablock1
+						(
+							layout type = -1
+							fields
+							(
+								Customer as "Customer "
+								Sales_Order_ID as "Sales Order ID "
+								Created_on_date_time as "Created  on (date & time )"
+								Expected_Shipment_Date as "Expected Shipment Date"
+								Order_Completion_Date as "Order Completion Date"
+								Item_Availability as "Item Availability"
+								Items.Order_Form as "Items"
+							)
+						)
+					)
+					menu
+    				(
+    	 				header
+    	 				(
+    		 				Edit 
+    		 				Duplicate 
+    		 				Delete 
+    	 				)
+						record
+						(
+							Edit   	   
+							Duplicate   	   
+							Delete   	   
+    					)
+    				)
+    				action
+    				(
+						on click
+						(
+							View Record   	   
+    					)
+						on right click
+						(
+							Edit   	   
+							Delete   	   
+							Duplicate   	   
+							View Record   	   
+    					)
+     				)
+				)
+
+				detailview
+				(
+					layout
+					(
+		 				type = 1
+						datablock1
+						(
+							layout type = -2
+							fields
+							(
+								Customer as "Customer "
+								Sales_Order_ID as "Sales Order ID "
+								Created_on_date_time as "Created  on (date & time )"
+								Expected_Shipment_Date as "Expected Shipment Date"
+								Order_Completion_Date as "Order Completion Date"
+								Item_Availability as "Item Availability"
+								Items.Order_Form as "Items"
+								Subtotal as "Subtotal "
+								Total
+							)
+						)
+					)
+					menu
+    				(
+    	 				header
+    	 				(
+    		 				Edit 
+    		 				Duplicate 
+    		 				Delete 
+    	 				)
+    				)
+				)
+			}
+			report All_Inventories
+			{
+				quickview
+				(
+					layout
+					(
+		 				type = -1
+						datablock1
+						(
+							layout type = -1
+							fields
+							(
+								SKU
+								Received_Date as "Received Date"
+								Item_Name as "Item Name"
+								item_Type as "item Type"
+								Category
+								Quantity_In_Stock as "Quantity In Stock"
+								Average_Price as "Average Price "
+							)
+						)
+					)
+					menu
+    				(
+    	 				header
+    	 				(
+    		 				Edit 
+    		 				Duplicate 
+    		 				Delete 
+    	 				)
+						record
+						(
+							Edit   	   
+							Duplicate   	   
+							Delete   	   
+    					)
+    				)
+    				action
+    				(
+						on click
+						(
+							View Record   	   
+    					)
+						on right click
+						(
+							Edit   	   
+							Delete   	   
+							Duplicate   	   
+							View Record   	   
+    					)
+     				)
+				)
+
+				detailview
+				(
+					layout
+					(
+		 				type = 1
+						datablock1
+						(
+							layout type = -2
+							fields
+							(
+								SKU
+								Received_Date as "Received Date"
+								Item_Name as "Item Name"
+								item_Type as "item Type"
+								Category
+								Quantity_In_Stock as "Quantity In Stock"
+								Average_Price as "Average Price "
+								Price
+							)
+						)
+					)
+					menu
+    				(
+    	 				header
+    	 				(
+    		 				Edit 
+    		 				Duplicate 
+    		 				Delete 
+    	 				)
+    				)
+				)
+			}
+			report Product_BOM_Report
+			{
+				quickview
+				(
+					layout
+					(
+		 				type = -1
+						datablock1
+						(
+							layout type = -1
+							fields
+							(
+								Item_Name as "Item Name "
+								SKU
+								Product_Type as "Product Type"
+								Product_Category as "Product Category"
+								Opening_Stock as "Opening Stock"
+								Bill_Of_Materials.Material_Name as "Bill Of Materials"
+								Operations.Operation_Stage as "Operations"
+							)
+						)
+					)
+					menu
+    				(
+    	 				header
+    	 				(
+    		 				Edit 
+    		 				Duplicate 
+    		 				Delete 
+    	 				)
+						record
+						(
+							Edit   	   
+							Duplicate   	   
+							Delete   	   
+    					)
+    				)
+    				action
+    				(
+						on click
+						(
+							View Record   	   
+    					)
+						on right click
+						(
+							Edit   	   
+							Delete   	   
+							Duplicate   	   
+							View Record   	   
+    					)
+     				)
+				)
+
+				detailview
+				(
+					layout
+					(
+		 				type = 1
+						datablock1
+						(
+							layout type = -2
+							fields
+							(
+								Item_Name as "Item Name "
+								SKU
+								Product_Type as "Product Type"
+								Product_Category as "Product Category"
+								Opening_Stock as "Opening Stock"
+								Bill_Of_Materials.Material_Name as "Bill Of Materials"
+								Operations.Operation_Stage as "Operations"
+							)
+						)
+					)
+					menu
+    				(
+    	 				header
+    	 				(
+    		 				Edit 
+    		 				Duplicate 
+    		 				Delete 
+    	 				)
+    				)
+				)
+			}
+			report All_Staffs
+			{
+				quickview
+				(
+					layout
+					(
+		 				type = -1
+						datablock1
+						(
+							layout type = -1
+							fields
+							(
+								Staff_ID as "Staff ID "
+								Name
+								Role
+								Address
+							)
+						)
+					)
+					menu
+    				(
+    	 				header
+    	 				(
+    		 				Edit 
+    		 				Duplicate 
+    		 				Delete 
+    	 				)
+						record
+						(
+							Edit   	   
+							Duplicate   	   
+							Delete   	   
+    					)
+    				)
+    				action
+    				(
+						on click
+						(
+							View Record   	   
+    					)
+						on right click
+						(
+							Edit   	   
+							Delete   	   
+							Duplicate   	   
+							View Record   	   
+    					)
+     				)
+				)
+
+				detailview
+				(
+					layout
+					(
+		 				type = 1
+						datablock1
+						(
+							layout type = -2
+							fields
+							(
+								Staff_ID as "Staff ID "
+								Name
+								Role
+								Address
+							)
+						)
+					)
+					menu
+    				(
+    	 				header
+    	 				(
+    		 				Edit 
+    		 				Duplicate 
+    		 				Delete 
+    	 				)
+    				)
+				)
+			}
+			report Product_Order_Report
+			{
+				quickview
+				(
+					layout
+					(
+		 				type = -1
+						datablock1
+						(
+							layout type = -1
+							fields
+							(
+								SKU
+								Product_Type as "Product Type"
+								Quantity
+								Product_Name as "Product Name "
+								Product_Category as "Product Category"
+								priority
+								Order_Type as "Order Type"
+							)
+						)
+					)
+					menu
+    				(
+    	 				header
+    	 				(
+    		 				Edit 
+    		 				Duplicate 
+    		 				Delete 
+    	 				)
+						record
+						(
+							Edit   	   
+							Duplicate   	   
+							Delete   	   
+    					)
+    				)
+    				action
+    				(
+						on click
+						(
+							View Record   	   
+    					)
+						on right click
+						(
+							Edit   	   
+							Delete   	   
+							Duplicate   	   
+							View Record   	   
+    					)
+     				)
+				)
+
+				detailview
+				(
+					layout
+					(
+		 				type = 1
+						datablock1
+						(
+							layout type = -2
+							fields
+							(
+								SKU
+								Product_Type as "Product Type"
+								Quantity
+								Product_Name as "Product Name "
+								Product_Category as "Product Category"
+								priority
+								Order_Type as "Order Type"
+								Subtotal
+								Labour_Cost as "Labour Cost"
+								GrandTotal
+							)
+						)
+					)
+					menu
+    				(
+    	 				header
+    	 				(
+    		 				Edit 
+    		 				Duplicate 
+    		 				Delete 
+    	 				)
+    				)
+				)
+			}
+			report All_Operations
+			{
+				quickview
+				(
+					layout
+					(
+		 				type = -1
+						datablock1
+						(
+							layout type = -1
+							fields
+							(
+								Operation_ID as "Operation ID"
+								Operation_Stage as "Operation Stage"
+								Product_Order_ID as "Product  Order ID"
+								Role
+								Assigned_Staff as "Assigned Staff"
+								Estimated_Time_in_mins as "Estimated Time (in mins) "
+								Details
+							)
+						)
+					)
+					menu
+    				(
+    	 				header
+    	 				(
+    		 				Edit 
+    		 				Duplicate 
+    		 				Delete 
+    	 				)
+						record
+						(
+							Edit   	   
+							Duplicate   	   
+							Delete   	   
+    					)
+    				)
+    				action
+    				(
+						on click
+						(
+							View Record   	   
+    					)
+						on right click
+						(
+							Edit   	   
+							Delete   	   
+							Duplicate   	   
+							View Record   	   
+    					)
+     				)
+				)
+
+				detailview
+				(
+					layout
+					(
+		 				type = 1
+						datablock1
+						(
+							layout type = -2
+							fields
+							(
+								Operation_ID as "Operation ID"
+								Operation_Stage as "Operation Stage"
+								Product_Order_ID as "Product  Order ID"
+								Role
+								Assigned_Staff as "Assigned Staff"
+								Estimated_Time_in_mins as "Estimated Time (in mins) "
+								Details
+								Start_Time as "Start Time"
+								End_Time as "End Time"
+								Status
+							)
+						)
+					)
+					menu
+    				(
+    	 				header
+    	 				(
+    		 				Edit 
+    		 				Duplicate 
+    		 				Delete 
+    	 				)
+    				)
+				)
+			}
+		}
+		menu
+		{
+			unused
+			{
+				form  Order_Form
+				{
+					icon = "design-2-form"
+				}
+				form  Inventory
+				{
+					icon = "shopping-stock"
+				}
+				form  Product_BOM
+				{
+					icon = "shopping-gift"
+				}
+				form  Staff
+				{
+					icon = "holidays-sickle"
+				}
+				form  Operations
+				{
+					icon = "sport-tactic"
+				}
+				form  Product_Order
+				{
+					icon = "tech-desktop"
+				}
+			}
+			space Space
+			{
+				displayname = "Space"
+				icon = "objects-spaceship"
+
+				section Orders
+				{
+					displayname = "Orders"
+					icon = "shopping-list"
+					report All_Orders
+					{
+						icon = "tech-desktop"
+					}
+				}
+				section App_Preferences
+				{
+					displayname = "App Preferences"
+					icon = "design-app"
+					systemcomponent
+					{
+						type = localization
+						displayname = "Language Selection"
+						icon = "education-language"
+					}
+					systemcomponent
+					{
+						type = connection
+						displayname = "Integrations"
+						icon = "tech-2-connection"
+					}
+				}
+				section Approvals
+				{
+					displayname = "Approvals"
+					icon = "ui-2-hourglass"
+					systemcomponent
+					{
+						type = approval
+						approval status = pending
+						displayname = "Pending Tasks"
+						icon = "ui-2-hourglass"
+					}
+					systemcomponent
+					{
+						type = approval
+						approval status = completed
+						displayname = "Completed Tasks"
+						icon = "design-todo"
+					}
+				}
+				section SharedAnalytics_Section
+				{
+					type = shared_user_report_section
+					displayname = "Reports"
+					icon = "business-chart-bar-33"
+				}
+				section Inventories
+				{
+					displayname = "Inventories"
+					icon = "shopping-stock"
+					report All_Inventories
+					{
+						icon = "tech-desktop"
+					}
+				}
+				section Product_BOM
+				{
+					displayname = "Product BOM"
+					icon = "shopping-gift"
+					report Product_BOM_Report
+					{
+						icon = "tech-desktop"
+					}
+				}
+				section Product_Order
+				{
+					displayname = "Product Order"
+					icon = "shopping-box"
+					report Product_Order_Report
+					{
+						icon = "tech-desktop"
+					}
+				}
+				section Operations
+				{
+					displayname = "Operations"
+					icon = "sport-tactic"
+					report All_Operations
+					{
+						icon = "tech-desktop"
+					}
+				}
+				section Staffs
+				{
+					displayname = "Staffs"
+					icon = "holidays-sickle"
+					report All_Staffs
+					{
+						icon = "tech-desktop"
+					}
+				}
+			}
+			preference
+			{
+				icon
+				{
+					style = outline
+				}
+			}
+		}
+		customize
+		{
+			layout
+			{
+				theme = "theme_4"
+			}
+			font = "lato"
+			color options
+			{
+				name = "custom_color_5"
+				brand color = "#92d191"
+				navigation background color = "#ffffff"
+				type = "custom"
+			}
+			logo
+			{
+				preference = "app_icon"
+				placement = "left"
+			}
+		}
+	}
+	phone
+	{
+		forms
+		{
+			form Inventory
+			{
+				label placement = auto
+			}
+			form Operations
+			{
+				label placement = auto
+			}
+			form Order_Form
+			{
+				label placement = auto
+			}
+			form Product_BOM
+			{
+				label placement = auto
+			}
+			form Product_Order
+			{
+				label placement = auto
+			}
+			form Staff
+			{
+				label placement = auto
+			}
+		}
+		customize
+		{
+			layout = slidingpane
+			font = "default"
+			style = "3"
+			color options
+			{
+				name = "custom_color_5"
+				brand color = "#92d191"
+				navigation background color = "#ffffff"
+				type = "custom"
+			}
+			logo
+			{
+				preference = "company_logo"
+			}
+		}
+	}
+	tablet
+	{
+		forms
+		{
+			form Inventory
+			{
+				label placement = auto
+			}
+			form Operations
+			{
+				label placement = auto
+			}
+			form Order_Form
+			{
+				label placement = auto
+			}
+			form Product_BOM
+			{
+				label placement = auto
+			}
+			form Product_Order
+			{
+				label placement = auto
+			}
+			form Staff
+			{
+				label placement = auto
+			}
+		}
+		customize
+		{
+			layout = slidingpane
+			font = "default"
+			style = "3"
+			color options
+			{
+				name = "custom_color_5"
+				brand color = "#92d191"
+				navigation background color = "#ffffff"
+				type = "custom"
+			}
+			logo
+			{
+				preference = "company_logo"
+			}
+		}
+	}
+	translation
+{
+{"Language_Settings":{"LANGAGUE_WITH_LOGIN":"browser"}}
+}
+}
