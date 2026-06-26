@@ -1,0 +1,5 @@
+staffId,fullName,email,role,jobTitle,department,phoneNumber,reportingLine,locationName
+STF-100,John Smith,john.smith@tppcng.com,SUPERVISOR,Production Supervisor,Production,9021808412,Production Manager,Shomolu
+STF-101,Sarah Johnson,sarah.johnson@tppcng.com,FACTORY_WORKER,Factory Worker,Production,8063168208,Production Supervisor,Shomolu
+STF-102,Michael Chen,michael.chen@tppcng.com,ACCOUNTANT,Finance Officer,Finance,,General Manager,Lagos
+STF-103,Amelia Brown,amelia.brown@tppcng.com,DESIGN_TEAM,Graphic Designer,Design,9095276666,General Manager,Shomolu

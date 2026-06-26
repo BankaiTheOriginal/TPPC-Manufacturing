@@ -1,0 +1,30 @@
+name: Deploy Frontend
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            export NVM_DIR="/home/debian/.nvm"
+            source "$NVM_DIR/nvm.sh"
+            cd /var/www/TPPC-Manufacturing-Frontend
+            git pull origin main
+            npm install
+            npm run build
+            pm2 restart TppcFrontend
